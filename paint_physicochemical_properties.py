@@ -24,14 +24,10 @@ import modlamp.descriptors
 import modlamp.analysis
 import modlamp.sequences
 
-# =======================
-# 1. seaborn 初始化（必须放最前）
-# =======================
+
 sns.set_theme(style="whitegrid", font_scale=1.2)
 
-# =======================
-# 2. 手动加载 Times New Roman 字体
-# =======================
+
 font_paths = [
     # "/geniusland/home/chenyaping/anaconda3/envs/myenv/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/times.ttf",
     "/geniusland/home/chenyaping/anaconda3/envs/myenv/lib/python3.10/site-packages/matplotlib/mpl-data/fonts/ttf/timesbd.ttf",
@@ -41,16 +37,14 @@ font_paths = [
 for p in font_paths:
     font_manager.fontManager.addfont(p)
 
-# =======================
-# 3. 强制设置 Matplotlib 使用 Times New Roman
-# =======================
+
 plt.rcParams["font.family"] = "serif"
 plt.rcParams["font.serif"] = ["Times New Roman"]
 plt.rcParams["font.weight"] = "bold" 
 plt.rcParams["axes.unicode_minus"] = False
 plt.rcParams["font.size"] = 18.0
 
-# 调试输出
+
 from matplotlib import rcParams
 print(rcParams['font.serif'])
 print("font.family:", rcParams["font.family"])
@@ -71,7 +65,7 @@ mic_low  = train_data["MIC_predict"] <= 0.90
 tox_low  = train_data["TOXIN_predict"] < 0.38
 tox_high = train_data["TOXIN_predict"] >= 0.38
 
-# 4 个子数据集
+
 train_data_01 = train_data[mic_low & tox_low]     # MIC <= 0.90, TOXIN < 0.38
 train_data_00 = train_data[mic_low & tox_high]    # MIC <= 0.90, TOXIN >= 0.38
 train_data_11 = train_data[mic_high & tox_low]    # MIC > 0.90, TOXIN < 0.38
@@ -237,7 +231,6 @@ yticks_dict = {
 
 for prop, prop_label in properties.items():
 
-    # === 每个性质单独创建一张 1×2 的图 ===
     fig, axes = plt.subplots(
         ncols=2,
         nrows=1,
@@ -273,14 +266,10 @@ for prop, prop_label in properties.items():
 
         ax.set_xticklabels([])
 
-    # === y 轴设置（只在左图） ===
     axes[0].set_ylabel(prop_label)
     if yticks_dict[prop]:
         axes[0].set_yticks(yticks_dict[prop])
 
-    # axes[1].set_yticklabels([])
-
-    # === 保存单张图 ===
     out_path = f"./figure/PhysiochcemicalProperties/Physiochemical_{prop}.svg"
     fig.savefig(out_path, bbox_inches="tight")
     plt.close(fig)

@@ -68,7 +68,7 @@ def finetuning_and_replace(args):
 
             with autocast(dtype=torch.bfloat16 if device == "cuda" and torch.cuda.is_bf16_supported() else torch.float16):
                 outputs = model(input_ids=input_ids, labels=labels)
-                loss = outputs.loss / accumulation_steps # HuggingFace 的模型自动计算好了 cross-entropy loss
+                loss = outputs.loss / accumulation_steps 
 
             epoch_loss += loss.item() * accumulation_steps
             scaler.scale(loss).backward()
@@ -110,27 +110,21 @@ def finetuning_and_replace(args):
         ][['SEQUENCE', 'MIC_predict', 'TOXIN_predict']]
         num_candidates = len(candidates)
 
-        # 逐行处理 real_df，替换符合条件的行
         final_rows = []
-        candidate_idx = 0  # 跟踪候选序列的索引
+        candidate_idx = 0  
 
         for _, row in train_dataset.iterrows():
-            # 判断是否需要替换当前行
             if ( (row['MIC_predict'] < MIC_cutoff) \
                 or \
                 (row['TOXIN_predict'] > TOXIN_cutoff) \
-                    == 1): # 
-                # 需要替换，且候选还有剩余
+                    == 1): 
                 if candidate_idx < len(candidates):
-                    # 替换为候选序列
                     replaced_row = candidates.iloc[candidate_idx]
                     final_rows.append(replaced_row)
                     candidate_idx += 1
                 else:
-                    # 候选用完，保留原行（替换数量不足）
                     final_rows.append(row)
             else:
-                # 不需要替换，保留原行
                 final_rows.append(row)
 
         train_dataset = pd.DataFrame(final_rows)
@@ -147,13 +141,13 @@ def finetuning_and_replace(args):
 
             optimizer.zero_grad()
             for step, batch in enumerate(data_loader):
-                # batch["input_ids"], batch["labels"] 来自 Dataset
+                # batch["input_ids"], batch["labels"] 
                 input_ids = batch["input_ids"].to(device, non_blocking=True)
                 labels = batch["labels"].to(device, non_blocking=True)
 
                 with autocast(dtype=torch.bfloat16 if device == "cuda" and torch.cuda.is_bf16_supported() else torch.float16):
                     outputs = model(input_ids=input_ids, labels=labels)
-                    loss = outputs.loss / accumulation_steps # HuggingFace 的模型自动计算好了 cross-entropy loss
+                    loss = outputs.loss / accumulation_steps 
 
                 epoch_loss += loss.item() * accumulation_steps
                 scaler.scale(loss).backward()
@@ -164,7 +158,6 @@ def finetuning_and_replace(args):
                     scaler.update()
                     optimizer.zero_grad()
 
-                # 每 100 步打印一次
                 if (step + 1) % 100 == 0:
                     avg_loss = epoch_loss / step_count
                     elapsed = time.time() - start_time

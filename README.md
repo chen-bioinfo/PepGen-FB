@@ -193,4 +193,4 @@ For a smoother reproduction process, verify the following before running the pro
 ## References
 
 - `toxinpred3/README.md`: toxicity prediction package notes
-- `attribute_util/`: source code for property models and inference utilities
+- `attribute_util/`: source code are from HydrAMP

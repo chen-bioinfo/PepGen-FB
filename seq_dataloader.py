@@ -43,8 +43,8 @@ def _get_train_data_loader(dataset):
         ProGen2_Dataset(dataset),
         batch_size=64,
         shuffle=True,
-        num_workers=8,          # 建议: 4~8，根据CPU核数调整
-        pin_memory=True,        # 锁页内存，加速 CPU→GPU
-        prefetch_factor=2,      # 预取下个 batch
-        persistent_workers=True # 保持 worker 常驻
+        num_workers=8,          
+        pin_memory=True,        
+        prefetch_factor=2,      
+        persistent_workers=True 
     )

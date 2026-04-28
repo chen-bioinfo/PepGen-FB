@@ -14,29 +14,24 @@ from modeling_progen import ProGenForCausalLM
 
 class RepetitionSuppressionProcessor(LogitsProcessor):
     def __init__(self, tokenizer, repeat_threshold=5, target_tokens=('G', 'R'), penalty=5.0):
-        """
-        repeat_threshold: 连续重复的阈值（超过该数量即惩罚）
-        target_tokens: 要惩罚的目标字符
-        penalty: logits 惩罚强度（越大抑制越强）
-        """
+
         self.tokenizer = tokenizer
         self.repeat_threshold = repeat_threshold
         self.target_tokens = target_tokens
         self.penalty = penalty
         
-        # 获取目标token的ID
+
         vocab = self.tokenizer.get_vocab()
         self.target_token_ids = [vocab[t] for t in target_tokens if t in vocab]
 
     def __call__(self, input_ids: torch.LongTensor, scores: torch.FloatTensor) -> torch.FloatTensor:
-        # 取当前批次中最后一个序列
+
         last_seq = input_ids[0].tolist()
         decoded = self.tokenizer.decode(last_seq, skip_special_tokens=True)
 
-        # 检查末尾是否有连续重复
+
         if len(decoded) >= self.repeat_threshold:
             for t in self.target_tokens:
-                # 统计末尾连续的 t 个数
                 count = 0
                 for ch in reversed(decoded):
                     if ch == t:
@@ -92,12 +87,12 @@ class ProGen(nn.Module):
             pad_token_id=pad_token_id,
             eos_token_id=eos_token_id,
             bad_words_ids=bad_words_ids,
-            max_length=self.max_length,     # 最长序列长度
-            do_sample=True,                 # 是否采样（True 比较多样化，False 就是贪婪解码）
-            top_k=15,                       # 只从 top 5 的 token 中采样
-            top_p=0.95,                     # nucleus sampling
-            temperature=0.95,               # 温度，越大越随机
-            logits_processor=processors,    # 对连续长序列的惩罚
+            max_length=self.max_length,     
+            do_sample=True,                 
+            top_k=15,                       
+            top_p=0.95,                     
+            temperature=0.95,               
+            logits_processor=processors,    
         )
 
     def forward(self, input_ids, labels=None, attention_mask=None):
@@ -109,4 +104,4 @@ class ProGen(nn.Module):
             input_ids=input_ids,
             labels=labels,
         )
-        return outputs  # HuggingFace 会返回包含 loss 和 logits 的对象
+        return outputs  

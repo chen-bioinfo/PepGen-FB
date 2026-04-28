@@ -1,0 +1,15 @@
+numpy
+pandas
+torch
+transformers
+tokenizers
+peft
+tqdm
+scikit-learn==1.0.2
+joblib
+tensorflow
+keras
+scipy
+matplotlib
+seaborn
+modlamp

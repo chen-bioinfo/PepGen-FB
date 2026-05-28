@@ -27,6 +27,7 @@ The full workflow is centered around `main.py`, while `generate.py`, `pred_toxin
 - `data/`: example data and training data.
 - `attribute_util/`: AMP/MIC property models, utility code, sequence feature processing, and inference helpers.
 - `toxinpred3/`: offline toxicity prediction package and model files.
+- `checkpoints/fb_lora_0/`: the trained LoRA model.
 
 ## Workflow Summary
 
